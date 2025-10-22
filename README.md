@@ -8,12 +8,18 @@ Model, **Türkçe destekli embedding** (SentenceTransformers) ve **Google Gemini
 ## Proje Amacı
 
 Öğretmenler çoğu zaman “Elimde balon, ip ve pipet var; ne etkinliği yapabilirim?” gibi sorulara hızlı yanıt arar.  
-Bu proje, 53 etkinliklik bir veri tabanı üzerinden **malzeme bazlı öneriler** üretir.
+Bu proje, 53 etkinlikli bir veri tabanı üzerinden **malzeme bazlı öneriler** üretir.
 
 Chatbot:
 -  Öğretmenden malzeme girdisini alır  
 -  En yakın etkinlikleri vektör benzerliği ile bulur  
 -  Gemini 2.0 Flash modeliyle anlamlı öneriler üretir  
+
+---
+## Veri Seti
+
+Bu projede kullanılan verileri okul öncesi ve sınıf düzeyindeki öğretmenlerin sıklıkla kullandığı materyal ve etkinlik örneklerine bakarak kendim oluşturdum.
+Her kayıt; etkinlik adı, kullanılan malzemeler, yaş grubu, gelişim alanı, süre, açıklama ve kazanımlardan oluşur.  
 
 ---
 
@@ -50,34 +56,16 @@ Kullanıcı Girdisi (malzemeler)
 
 ---
 
-##  Embedding (Vektörleştirme) Süreci
-
-**Embedding**, metinleri sayısal vektörlere dönüştürür.  
-Bu vektörler, cümlelerin **anlamını matematiksel olarak temsil eder.**
-
-Örnek:
-```
-"balon, pipet, ip" → [0.13, -0.22, 0.56, ...]
-"Balon Roketi" → [0.14, -0.20, 0.54, ...]
-```
-
-Bu iki vektörün **cosine similarity** değeri yüksek olduğu için sistem “Balon Roketi” etkinliğini önerir.
-
-Model:
->  `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
-
----
-
 ##  Dosya Yapısı
 
 ```
 ogretmen-chatbot/
 │
-├── etkinlikler_dataset.md      # 53 etkinliklik veri seti
+├── etkinlikler_dataset.md      # 53 etkinlikli veri seti
 ├── create_database.py          # Embedding veritabanı oluşturur
 ├── streamlit_app.py            # Ana uygulama arayüzü
 ├── requirements.txt            # Gereklilikler
-├── .env                        # API anahtarı
+├── .gitignore                  # API anahtarı
 └── chroma/                     # Otomatik oluşur (vektör DB)
 ```
 
@@ -85,13 +73,10 @@ ogretmen-chatbot/
 
 ##  Kurulum ve Çalıştırma
 
-### 1- Ortamı hazırla
-```bash
-cd ogretmen-chatbot
-python -m venv venv
-venv\Scripts\activate        # Windows
-# veya
-source venv/bin/activate       # macOS / Linux
+### 1- Bu projeyi klonlayın
+   ```bash
+   git clone https://github.com/eda027/ogretmen_chatbot.git
+   cd ogretmen_chatbot
 ```
 
 ### 2- Gerekli kütüphaneleri yükle
@@ -125,31 +110,16 @@ Tarayıcıda aç:
 
 ---
 
-##  Örnek Kullanım
+## Uygulama Ekran Görüntüleri
 
-**Kullanıcı:**  
-> balon, pipet, bant, ip  
+Aşağıda chatbot arayüzünün çalışma aşamalarından örnek ekran görüntüleri yer almaktadır:
 
-**Model Yanıtı:**  
-> **Etkinlik:** Balon Roketi  
-> **Açıklama:** Balon şişirilir, pipete bantlanır ve ip boyunca ilerler.  
-> **Kazanımlar:** Motor beceriler, dikkat, neden-sonuç ilişkisi.
+### 1. Ana Arayüz
+![Chatbot Ana Sayfa](./a.png)
 
----
-
-##  Teknik Detaylar
-
-###  Embedding Fonksiyonu (Yeni Chroma 0.5.x için)
-```python
-class SentenceTransformerEmbedding:
-    def __call__(self, input):
-        return model.encode(input).tolist()
-```
-Bu sınıf, Chroma’nın yeni `__call__(self, input)` imzasına uygundur.
-
-###  Model Yükleme
-İlk çalıştırmada model Hugging Face’ten indirilir (~400 MB).  
-Sonraki çalıştırmalarda yerel önbellekten yüklenir.
+### 2. Etkinlik Önerisi Çıktısı
+![Etkinlik Öneri Sonucu](./aa.png)
 
 ---
+
 
